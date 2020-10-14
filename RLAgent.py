@@ -3,6 +3,7 @@ import torch.nn.functional as F
 import numpy as np
 from QNetwork import QNetwork
 from ReplayBuffer import ReplayBuffer
+from History import History
 
 LEARNING_RATE = 5e-4
 BATCH_SIZE = 64
@@ -10,6 +11,9 @@ BUFFER_SIZE = int(1e5)
 GAMMA = 0.99
 TAU = 1e-3
 UPDATE_EVERY = 4
+NUMBER_BUFFER_FRAMES = 4
+SIZEROWS = 84
+SIZECOLS = 84
 
 class Agent():
 	def __init__(self, state_size, action_size, device, train=True):
@@ -23,6 +27,7 @@ class Agent():
 
         self.memory = ReplayBuffer(BUFFER_SIZE, BATCH_SIZE)
         self.current_step = 0
+        self.history = History((NUMBER_BUFFER_FRAMES, SIZEROWS, SIZECOLS), action_size)
 
     def step(self, state, action, reward, next_state, done):
     	self.memory.remember(state, action, reward, next_state, done)

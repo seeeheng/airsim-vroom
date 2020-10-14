@@ -37,9 +37,9 @@ class AirsimClient():
         return car_controls
 
     def get_state(self):
+        # Converts tate into a 84x84 numpy array
         responses = self.client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.DepthPerspective, True, False)])
         current_state = self.transform_input(responses)
-        print(current_state)
         return current_state
 
     def transform_input(self,responses):
