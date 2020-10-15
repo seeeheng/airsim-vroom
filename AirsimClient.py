@@ -66,3 +66,31 @@ class AirsimClient():
 
     def reset(self):
         self.client.reset()
+
+"""
+{   'gear': 0,                                                                            
+    'handbrake': False,                                                                               
+    'kinematics_estimated': <KinematicsState> {   'angular_acceleration': <Vector3r> {   'x_val': 0.0,                                                                                                     
+    'y_val': 0.0, 
+    'z_val': 0.0},                                                                                    
+    'angular_velocity': <Vector3r> {   'x_val': 0.0,                                                                                                                                                       
+    'y_val': 0.0,  
+    'z_val': 0.0},                                 
+    'linear_acceleration': <Vector3r> {   'x_val': 0.0,                                                                                                                                                    
+    'y_val': 0.0,                                  
+    'z_val': 0.0},                                 
+    'linear_velocity': <Vector3r> {   'x_val': 0.0,                                                                                                                                                        
+    'y_val': 0.0,                                  
+    'z_val': -0.0},                                
+    'orientation': <Quaternionr> {   'w_val': 1.0,                                                   
+    'x_val': 3.14368044200819e-05,                                                                   
+    'y_val': 5.9604641222676946e-08,                                                                 
+    'z_val': -1.873779343491977e-12},
+    'position': <Vector3r> {   'x_val': 0.0,                                                         
+    'y_val': 4.577636616431846e-07, 
+    'z_val': 0.24152274429798126}},  
+    'maxrpm': 7500.0,                              
+    'rpm': 0.0,                                                                                       
+    'speed': 0.0,                                                                                     
+    'timestamp': 1602734345355201000}
+"""

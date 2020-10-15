@@ -76,3 +76,8 @@ class Agent():
 	def soft_update(self, online_model, target_model, tau):
 		for target_param, online_param in zip(target_model.parameters(), online_model.parameters()):
 			target_param.data.copy_(tau * online_param.data + (1.0 - tau) * target_param.data) 
+
+	def save(self):
+		torch.save(self.q_network_online, "car_online.pth")
+		torch.save(self.q_network_target, "car_target.pth")
+		

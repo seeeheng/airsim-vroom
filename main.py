@@ -15,10 +15,12 @@ agent = Agent(84*84*4,6,device)
 
 current_image = client.get_image()
 next_state = agent.process_image(current_image)
-
+start_time = time.time()
+n_episodes = 0
 while True:
+    if time.time() - start_time > 3600:
+        break
     state = next_state
-
     action = agent.act(state)
     client.interpret_actions(action)
     client.act()
@@ -31,12 +33,14 @@ while True:
         car_control= client.interpret_actions(0)
         client.act()
         time.sleep(1)
-        #current_step += 1
+        n_episodes += 1
 
     next_image = client.get_image()
     next_state = agent.process_image(next_image)
-    print("Action={},Reward{}".format(action,reward))
+    # print("Action={},Reward{}".format(action,reward))
     time.sleep(1)
+print("Episodes achieved: {}".format())
+agent.save()
 
 # Sample of current_image
 """ 

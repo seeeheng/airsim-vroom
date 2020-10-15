@@ -6,6 +6,9 @@ class AirsimEnv():
 	def __init__(self, client):
 		self.client = client
 
+	def check_time(self):
+		print(self.client.get_car_state().timestamp)
+
 	def compute_reward(self):
 		collision_info = self.client.get_collision_info()
 		reward = -1
