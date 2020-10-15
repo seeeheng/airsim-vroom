@@ -63,3 +63,6 @@ class AirsimClient():
         im_final = np.array(image.resize((84, 84)).convert('L')) 
 
         return im_final
+
+    def reset(self):
+        self.client.reset()

@@ -1,52 +1,42 @@
 import numpy as np
 import time
 import airsim
+import torch
+
 from AirsimClient import AirsimClient
 from AirsimEnv import AirsimEnv
+from RLAgent import Agent
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(device)
 client = AirsimClient()
 env = AirsimEnv(client)
+agent = Agent(84*84*4,6,device)
+
+current_image = client.get_image()
+next_state = agent.process_image(current_image)
 
 while True:
-    current_image = client.get_image()
-    # print(current_image)
-    
-    # action = int(input("Manual drive!: "))
-    client.interpret_actions(1)
-    car_state = client.get_car_state()
+    state = next_state
+
+    action = agent.act(state)
+    client.interpret_actions(action)
     client.act()
 
-    print("Reward gotten: {}".format(env.compute_reward()))
-    print("is_done: {}".format(env.is_done()))
+    reward = env.compute_reward()
+    done = env.is_done()
 
-    # print(car_state)
-    collision_info = client.get_collision_info()
-    print("Speed %d, Gear %d" % (car_state.speed, car_state.gear))
-    print(collision_info)
-    # print(client.car_controls)
+    if done:
+        client.reset()
+        car_control= client.interpret_actions(0)
+        client.act()
+        time.sleep(1)
+        #current_step += 1
+
+    next_image = client.get_image()
+    next_state = agent.process_image(next_image)
+    print("Action={},Reward{}".format(action,reward))
     time.sleep(1)
-    # get state of the car
-    # action = agent.act(current_state)
-    # car_controls = interpret_action(action)
-    # client.setCarControls(carControls)
-    # car_state = client.getCarState()
-    # reward = compute_reward(car_state)
-    # done = isDone(car_state, car_controls, reward)
-    # if done == 1:
-        # reward = -10
-    # agent.observe(current_state, action, reward, done)
-    # agent.train()
-    # if done:
-        # client.reset()
-        # car_control = interpret_action(1)
-        # client.setCarControls(car_control)
-        # time.sleep(1)
-        # current_step += 1
-
-
-    # responses = client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.DepthPerspective, True, False)])
-    # current_state = transform_input(responses)
-
 
 # Sample of current_image
 """ 
