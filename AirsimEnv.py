@@ -1,10 +1,13 @@
 import airsim
 import time
 import numpy as np
+import pandas as pd
 
 class AirsimEnv():
 	def __init__(self, client):
 		self.client = client
+		self.time = []
+		self.episodes = []
 
 	def check_time(self):
 		print(self.client.get_car_state().timestamp)
@@ -27,6 +30,13 @@ class AirsimEnv():
 			return True
 		else:
 			return False
+
+
+	def log_episodes_and_time(self, n_episodes, time_taken):
+		self.time += [time_taken]
+		self.episodes += [n_episodes]
+		pd.DataFrame(data=zip(self.time,self.episodes),columns=("time","episodes")).to_csv("benchmark/log.csv",index=False)
+		# pd.Series(data=self.scores).to_csv("benchmark/scores.csv",index=True)
 
 # Sample of collision info
 """

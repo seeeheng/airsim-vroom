@@ -8,7 +8,7 @@ from AirsimEnv import AirsimEnv
 from RLAgent import Agent
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-print(device)
+# print(device)
 client = AirsimClient()
 env = AirsimEnv(client)
 agent = Agent(84*84*4,6,device)
@@ -17,9 +17,8 @@ current_image = client.get_image()
 next_state = agent.process_image(current_image)
 start_time = time.time()
 n_episodes = 0
+env.log_episodes_and_time(n_episodes,time.time())
 while True:
-    if time.time() - start_time > 3600:
-        break
     state = next_state
     action = agent.act(state)
     client.interpret_actions(action)
@@ -27,8 +26,16 @@ while True:
 
     reward = env.compute_reward()
     done = env.is_done()
+    current_reward = 0
 
     if done:
+        if n_episodes % 1 == 0:
+            env.log_episodes_and_time(n_episodes,time.time())
+            torch.save(agent.q_network_online.state_dict(), 'checkpoints/checkpoint_{}.pth'.format(n_episodes))
+
+        next_image = client.get_image()
+        next_state = agent.process_image(next_image)
+        agent.step(state, action, reward, next_state, done)
         client.reset()
         car_control= client.interpret_actions(0)
         client.act()
@@ -37,10 +44,9 @@ while True:
 
     next_image = client.get_image()
     next_state = agent.process_image(next_image)
-    # print("Action={},Reward{}".format(action,reward))
+    agent.step(state, action, reward, next_state, done)
+
     time.sleep(1)
-print("Episodes achieved: {}".format())
-agent.save()
 
 # Sample of current_image
 """ 

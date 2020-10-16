@@ -31,6 +31,8 @@ class Agent():
 		self.history = History((NUMBER_BUFFER_FRAMES, SIZEROWS, SIZECOLS))
 
 	def step(self, state, action, reward, next_state, done):
+		state=np.expand_dims(state,axis=0)
+		next_state=np.expand_dims(next_state,axis=0)
 		self.memory.remember(state, action, reward, next_state, done)
 
 		# at every $UPDATE_EVERY steps, sample.
@@ -45,9 +47,10 @@ class Agent():
 
 		self.optimizer.zero_grad()
 
-		qtargets_next = self.q_network_target(next_states).detach().max(1)[0].unsqueeze(1) #Bunch of shit here
-		QTarget = rewards + (gamma * qtargets_next * (1-dones))
-		QExpected = self.q_network_online(states).gather(1, actions)
+		qtargets_next = self.q_network_target(next_states)[0].detach().max(1)[0].unsqueeze(1) #Bunch of shit here
+		QTarget = rewards + (GAMMA * qtargets_next * (1-dones))
+		QOnline = self.q_network_online(states)
+		QExpected = self.q_network_online(states)[0].gather(1, actions.long())
 
 		loss = F.mse_loss(QExpected, QTarget)
 		self.optimizer.zero_grad()
