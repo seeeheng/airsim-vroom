@@ -18,6 +18,8 @@ next_state = agent.process_image(current_image)
 start_time = time.time()
 n_episodes = 0
 env.log_episodes_and_time(n_episodes,time.time())
+current_reward = 0
+
 while True:
     state = next_state
     action = agent.act(state)
@@ -26,12 +28,13 @@ while True:
 
     reward = env.compute_reward()
     done = env.is_done()
-    current_reward = 0
-
+    current_reward += reward
     if done:
-        if n_episodes % 1 == 0:
+        if n_episodes % 5 == 0:
             env.log_episodes_and_time(n_episodes,time.time())
+            env.log_reward(n_episodes,current_reward)
             torch.save(agent.q_network_online.state_dict(), 'checkpoints/checkpoint_{}.pth'.format(n_episodes))
+            current_reward = 0
 
         next_image = client.get_image()
         next_state = agent.process_image(next_image)
@@ -39,7 +42,7 @@ while True:
         client.reset()
         car_control= client.interpret_actions(0)
         client.act()
-        time.sleep(1)
+        time.sleep(0.5)
         n_episodes += 1
 
     next_image = client.get_image()

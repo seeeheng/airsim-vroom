@@ -8,6 +8,8 @@ class AirsimEnv():
 		self.client = client
 		self.time = []
 		self.episodes = []
+		self.episodes_reward = []
+		self.reward = []
 
 	def check_time(self):
 		print(self.client.get_car_state().timestamp)
@@ -18,9 +20,9 @@ class AirsimEnv():
 		if collision_info.has_collided:
 			# print("Collided with {}".format(collision_info.object_name))
 			if collision_info.object_name == "RLTarget_0":
-				reward += 100000
+				reward += 1000
 			elif collision_info.object_name != "RLTarget_0":
-				reward -= 2000
+				reward -= 200
 		# print("Reward = {}".format(reward))
 		return reward
 
@@ -31,11 +33,16 @@ class AirsimEnv():
 		else:
 			return False
 
+	def log_reward(self, n_episodes, current_reward):
+		self.episodes_reward += [n_episodes]
+		self.reward += [current_reward]
+		pd.DataFrame(data=zip(self.episodes_reward,self.reward),columns=("episodes","reward")).to_csv("benchmark/reward.csv"	,index=False)
+
 
 	def log_episodes_and_time(self, n_episodes, time_taken):
 		self.time += [time_taken]
 		self.episodes += [n_episodes]
-		pd.DataFrame(data=zip(self.time,self.episodes),columns=("time","episodes")).to_csv("benchmark/log.csv",index=False)
+		pd.DataFrame(data=zip(self.time,self.episodes),columns=("time","episodes")).to_csv("benchmark/log.csv"	,index=False)
 		# pd.Series(data=self.scores).to_csv("benchmark/scores.csv",index=True)
 
 # Sample of collision info
