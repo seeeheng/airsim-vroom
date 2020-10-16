@@ -17,7 +17,6 @@ current_image = client.get_image()
 next_state = agent.process_image(current_image)
 start_time = time.time()
 n_episodes = 0
-env.log_episodes_and_time(n_episodes,time.time())
 current_reward = 0
 
 while True:

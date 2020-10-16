@@ -20,9 +20,9 @@ class AirsimEnv():
 		if collision_info.has_collided:
 			# print("Collided with {}".format(collision_info.object_name))
 			if collision_info.object_name == "RLTarget_0":
-				reward += 1000
+				reward += 10000
 			elif collision_info.object_name != "RLTarget_0":
-				reward -= 200
+				reward -= 2000
 		# print("Reward = {}".format(reward))
 		return reward
 
